@@ -6,9 +6,11 @@ def _url_base_datos() -> str:
     url = os.environ.get("DATABASE_URL", "").strip()
     if not url:
         return "sqlite:///activate_chimal.db"  # queda en la carpeta instance/
-    # Algunos proveedores entregan "postgres://", SQLAlchemy exige "postgresql://"
+    # Forzamos el controlador psycopg2, que es el que está en requirements.txt
     if url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql://", 1)
+        url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
     return url
 
 
