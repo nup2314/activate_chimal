@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera, mascota %}
+{% block titulo %}Iniciar sesión{% endblock %}
+{% block seccion %}cuenta{% endblock %}
+{% block contenido %}
+{{ cabecera("Inicia sesión", "Entra para ver tu reto de hoy.") }}
+{{ mascota("¡Bienvenido a bordo! Inicia sesión para ver tu reto de hoy.") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  <input type="hidden" name="siguiente" value="{{ siguiente }}">
+  {{ campo("correo", "Correo electrónico", "email", request.form.get("correo", ""), required=true, autocomplete="email", inputmode="email", autofocus=true) }}
+  {{ campo("contrasena", "Contraseña", "password", "", required=true, autocomplete="current-password") }}
+  <button class="btn btn--bloque" type="submit">Entrar</button>
+  <p class="nota-pie"><a href="{{ url_for('auth.recuperar') }}">Olvidé mi contraseña</a></p>
+  <p class="nota-pie">¿Aún no tienes cuenta? <a href="{{ url_for('auth.registro') }}">Créala gratis</a></p>
+</form>
+{% endblock %}

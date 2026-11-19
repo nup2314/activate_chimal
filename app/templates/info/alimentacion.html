@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono %}
+{% block titulo %}Alimentación{% endblock %}
+{% block seccion %}info{% endblock %}
+{% block contenido %}
+{{ cabecera("Alimentación", "Ideas para comer mejor, información nutricional de alimentos comunes y consejos para hidratarte.") }}
+
+{% if menor_de_edad and clave == 'bajar_peso' %}
+<p class="aviso aviso--info">Como eres menor de 18 años, habla con un médico o nutriólogo antes de cambiar tu forma de comer para bajar de peso. Tu cuerpo todavía está creciendo.</p>
+{% endif %}
+
+<section class="tarjeta">
+  <h2>{{ consejos.titulo }}</h2>
+  <ul class="vinetas">{% for p in consejos.puntos %}<li>{{ p }}</li>{% endfor %}</ul>
+  <p class="ayuda">Tu objetivo actual es «{{ OBJETIVOS[clave].nombre }}». <a href="{{ url_for('actividad.objetivos') }}">Cambiar objetivo</a></p>
+</section>
+
+<section class="tarjeta">
+  <h2>Un día de ejemplo</h2>
+  <dl class="dia-comidas">
+    {% for momento, texto in consejos.dia %}<div><dt>{{ momento }}</dt><dd>{{ texto }}</dd></div>{% endfor %}
+  </dl>
+  <p class="ayuda">Son ideas, no una dieta: ajusta las porciones a tu hambre y a tu actividad.</p>
+</section>
+
+<section class="tarjeta plato">
+  <h2>El plato del bien comer</h2>
+  <div class="plato-cuerpo">
+    <div class="plato-grafico" aria-hidden="true"></div>
+    <ul>
+      {% for g in datos.plato %}<li><span class="plato-punto" style="background: {{ g.color }}"></span><div><strong>{{ g.nombre }}</strong><span>{{ g.texto }}</span></div></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Alimentos y su información nutricional</h2>
+  <nav class="subnav" aria-label="Grupo de alimentos">
+    <a href="{{ url_for('info.alimentacion') }}#alimentos" {% if not grupo %}aria-current="page"{% endif %}>Todos</a>
+    {% for k, nombre in datos.grupos.items() %}
+    <a href="{{ url_for('info.alimentacion', grupo=k) }}#alimentos" {% if grupo == k %}aria-current="page"{% endif %}>{{ nombre }}</a>
+    {% endfor %}
+  </nav>
+  <ul class="lista lista--tarjetas" id="alimentos">
+    {% for a in alimentos %}
+    <li class="tarjeta alimento">
+      <div class="alimento-cab"><span class="alimento-emoji" aria-hidden="true">{{ a.emoji }}</span>
+        <div><h3>{{ a.nombre }}</h3><p class="ayuda">{{ datos.grupos[a.grupo] }} · porción: {{ a.porcion }}</p></div></div>
+      <dl class="macros">
+        <div><dt>Energía</dt><dd>{{ a.kcal }} <small>kcal</small></dd></div>
+        <div><dt>Proteína</dt><dd>{{ a.proteina }} <small>g</small></dd></div>
+        <div><dt>Carbohidratos</dt><dd>{{ a.carbos }} <small>g</small></dd></div>
+        <div><dt>Grasa</dt><dd>{{ a.grasa }} <small>g</small></dd></div>
+      </dl>
+      <p class="alimento-nota">{{ a.nota }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="ayuda">Valores aproximados por cada 100 g del alimento. Cambian según cómo se prepare y la marca.</p>
+</section>
+
+<section class="tarjeta">
+  <h2>{{ icono('alimentacion') }} Hidratación</h2>
+  <ul class="vinetas">{% for h in datos.hidratacion %}<li>{{ h }}</li>{% endfor %}</ul>
+</section>
+
+<p class="ayuda">Esta información es educativa y general. No sustituye la valoración de un médico o nutriólogo, sobre todo si tienes alguna condición de salud, alergias o estás en crecimiento.</p>
+{% endblock %}

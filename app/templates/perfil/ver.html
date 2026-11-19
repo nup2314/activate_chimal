@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icono, cabecera %}
+{% block titulo %}Mi perfil{% endblock %}
+{% block seccion %}cuenta{% endblock %}
+{% block contenido %}
+{{ cabecera("Mi perfil") }}
+<section class="tarjeta perfil-cab">
+  <div class="perfil-avatar">{{ avatar_ui(usuario_actual.avatar, 96) }}</div>
+  <div>
+    <h2>{{ usuario_actual.nombre }} {{ usuario_actual.apellidos }}</h2>
+    <p class="ayuda">{{ usuario_actual.correo }}</p>
+    <a class="btn btn--sec btn--chico" href="{{ url_for('avatar.editor') }}">Personalizar avatar</a>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <dl class="datos">
+    <div><dt>Edad</dt><dd>{{ usuario_actual.edad or '—' }}{% if usuario_actual.edad %} años{% endif %}</dd></div>
+    <div><dt>Grupo de rutina</dt><dd>{{ grupo.nombre }}</dd></div>
+    <div><dt>Peso</dt><dd>{{ usuario_actual.peso ~ ' kg' if usuario_actual.peso else 'Sin registrar' }}</dd></div>
+    <div><dt>Estatura</dt><dd>{{ usuario_actual.estatura|int ~ ' cm' if usuario_actual.estatura else 'Sin registrar' }}</dd></div>
+    <div><dt>Ejercicio</dt><dd>{{ frecuencias[usuario_actual.frecuencia].nombre }}</dd></div>
+    <div><dt>Objetivo</dt><dd>{{ OBJETIVOS[usuario_actual.objetivo].nombre if usuario_actual.objetivo else 'Sin elegir' }}</dd></div>
+    <div><dt>Miembro desde</dt><dd>{{ usuario_actual.creado_en|fecha }}</dd></div>
+  </dl>
+  <p class="ayuda">El peso se usa solo para estimar las calorías de tus actividades.</p>
+</section>
+
+<div class="fila fila--gap">
+  <a class="btn" href="{{ url_for('perfil.editar') }}">Editar perfil</a>
+  <a class="btn btn--sec" href="{{ url_for('actividad.objetivos') }}">Cambiar objetivo</a>
+</div>
+{% endblock %}

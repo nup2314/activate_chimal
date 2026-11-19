@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}Escribe tu código{% endblock %}
+{% block seccion %}cuenta{% endblock %}
+{% block contenido %}
+{{ cabecera("Escribe tu código", "Revisa " ~ correo ~ " (y la carpeta de spam). Si no llega, pide uno nuevo.", volver=url_for('auth.recuperar'), volver_texto="Pedir otro código") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  {{ campo("codigo", "Código de 6 dígitos", "text", "", required=true, inputmode="numeric", pattern="[0-9]{6}", maxlength="6", autocomplete="one-time-code", autofocus=true) }}
+  <div class="campo-fila">
+    {{ campo("contrasena", "Nueva contraseña", "password", "", "Mínimo 8 caracteres, con letras y números.", required=true, minlength="8", autocomplete="new-password") }}
+    {{ campo("confirmar", "Repite la contraseña", "password", "", required=true, minlength="8", autocomplete="new-password") }}
+  </div>
+  <button class="btn btn--bloque" type="submit">Cambiar contraseña</button>
+</form>
+{% endblock %}

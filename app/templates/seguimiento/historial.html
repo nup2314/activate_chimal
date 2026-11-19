@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono, csrf %}
+{% block titulo %}Historial{% endblock %}
+{% block seccion %}seguimiento{% endblock %}
+{% block contenido %}
+{{ cabecera("Historial", "Tus retos, actividades y pasos por fecha.") }}
+{% include "seguimiento/_subnav.html" %}
+
+<form method="get" class="filtros">
+  <div class="campo">
+    <label for="tipo">Mostrar</label>
+    <select id="tipo" name="tipo">
+      {% for v, t in [('todo','Todo'),('actividades','Actividades'),('retos','Retos diarios'),('pasos','Pasos')] %}
+      <option value="{{ v }}" {% if filtros.tipo == v %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="campo"><label for="desde">Desde</label><input id="desde" name="desde" type="date" value="{{ filtros.desde }}" max="{{ hoy.isoformat() }}"></div>
+  <div class="campo"><label for="hasta">Hasta</label><input id="hasta" name="hasta" type="date" value="{{ filtros.hasta }}" max="{{ hoy.isoformat() }}"></div>
+  <button class="btn btn--sec" type="submit">Filtrar</button>
+</form>
+
+<div class="fila fila--entre">
+  <p class="ayuda">{{ total }} {{ 'registro' if total == 1 else 'registros' }}</p>
+  <a class="btn btn--chico" href="{{ url_for('actividad.registrar') }}">{{ icono('mas') }} Registrar actividad</a>
+</div>
+
+{% for g in grupos %}
+<section class="dia">
+  <h2>{{ g.fecha|fecha }}</h2>
+  <ul class="lista">
+    {% for e in g.eventos %}
+    <li class="evento evento--{{ e.tipo }}">
+      {% if e.tipo == 'actividad' %}
+        <div>
+          <strong>{{ e.obj.actividad }}</strong>
+          <span class="ayuda">{{ e.obj.tiempo }} min{% if e.obj.distancia %} · {{ e.obj.distancia }} km{% endif %}{% if e.obj.calorias %} · {{ e.obj.calorias|round|int }} kcal{% endif %}{% if e.obj.esfuerzo %} · esfuerzo {{ e.obj.esfuerzo }}{% endif %}</span>
+          {% if e.obj.notas %}<span class="ayuda">{{ e.obj.notas }}</span>{% endif %}
+        </div>
+        <form method="post" action="{{ url_for('actividad.eliminar', actividad_id=e.obj.id) }}" data-confirmar="¿Eliminar esta actividad?">
+          {{ csrf() }}<button class="btn btn--chico btn--texto" type="submit">Eliminar</button>
+        </form>
+      {% elif e.tipo == 'reto' %}
+        <div><strong>Reto diario</strong><span class="ayuda">{{ OBJETIVOS[e.obj.objetivo].nombre if e.obj.objetivo in OBJETIVOS else e.obj.objetivo }} · {{ e.obj.porcentaje }} %{% if e.obj.completado %} · completado{% endif %}</span></div>
+      {% else %}
+        <div><strong>Pasos</strong><span class="ayuda">{{ e.obj.cantidad|miles }} pasos{% if e.obj.cantidad >= meta_pasos %} · meta lograda{% endif %}</span></div>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% else %}
+<p class="vacio-texto tarjeta">No hay registros con estos filtros. Completa tu reto, anota tus pasos o <a href="{{ url_for('actividad.registrar') }}">registra una actividad</a> y aparecerán aquí.</p>
+{% endfor %}
+
+{% if paginas > 1 %}
+<nav class="paginas" aria-label="Páginas">
+  {% if pagina > 1 %}<a class="btn btn--sec btn--chico" href="{{ url_for('seguimiento.historial', pagina=pagina-1, **filtros) }}">Anterior</a>{% endif %}
+  <span>Página {{ pagina }} de {{ paginas }}</span>
+  {% if pagina < paginas %}<a class="btn btn--sec btn--chico" href="{{ url_for('seguimiento.historial', pagina=pagina+1, **filtros) }}">Siguiente</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

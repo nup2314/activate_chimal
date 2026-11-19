@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}Recuperar contraseña{% endblock %}
+{% block seccion %}cuenta{% endblock %}
+{% block contenido %}
+{{ cabecera("Recupera tu contraseña", "Te enviaremos un código de 6 dígitos a tu correo. Dura 15 minutos.", volver=url_for('auth.login'), volver_texto="Iniciar sesión") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  {{ campo("correo", "Correo de tu cuenta", "email", "", required=true, autocomplete="email", inputmode="email", autofocus=true) }}
+  <button class="btn btn--bloque" type="submit">Enviar código</button>
+</form>
+{% endblock %}

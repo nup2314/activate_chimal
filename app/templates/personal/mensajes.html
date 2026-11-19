@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, csrf %}
+{% block titulo %}Mensajes{% endblock %}
+{% block seccion %}personal{% endblock %}
+{% block clase_main %}envoltura--ancha{% endblock %}
+{% block contenido %}
+{{ cabecera("Mensajes de contacto", "Lo que escriben los usuarios desde el formulario.") }}
+{% include "personal/_nav.html" %}
+<ul class="lista lista--tarjetas">
+  {% for m in mensajes %}
+  <li class="tarjeta mensaje {% if not m.leido %}mensaje--nuevo{% endif %}">
+    <div class="fila fila--entre fila--envolver">
+      <h2>{{ m.asunto }}</h2>
+      <span class="ayuda">{{ m.creado_en|fecha('hora') }}</span>
+    </div>
+    <p class="ayuda">{{ m.nombre }} · <a href="mailto:{{ m.correo }}">{{ m.correo }}</a></p>
+    <div class="texto-largo">{% for p in m.mensaje.split('\n') if p.strip() %}<p>{{ p }}</p>{% endfor %}</div>
+    <div class="fila fila--gap">
+      <form method="post" action="{{ url_for('personal.marcar_leido', mensaje_id=m.id) }}">{{ csrf() }}
+        <button class="btn btn--chico btn--sec" type="submit">{{ 'Marcar como no leído' if m.leido else 'Marcar como leído' }}</button></form>
+      <form method="post" action="{{ url_for('personal.eliminar_mensaje', mensaje_id=m.id) }}" data-confirmar="¿Eliminar este mensaje?">{{ csrf() }}
+        <button class="btn btn--chico btn--texto btn--peligro-texto" type="submit">Eliminar</button></form>
+    </div>
+  </li>
+  {% else %}
+  <li class="vacio-texto tarjeta">Todavía no hay mensajes.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

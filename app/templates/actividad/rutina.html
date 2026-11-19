@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera %}
+{% block titulo %}Mi rutina{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera("Mi rutina", obj.icono ~ " " ~ obj.nombre ~ " · " ~ grupo.nombre) }}
+<section class="tarjeta">
+  <p>{{ obj.resumen }}</p>
+  <p class="nota">{{ grupo.nota }}</p>
+  <p class="ayuda">Nivel de ejercicio: {{ frecuencia.nombre|lower }}. Si te resulta muy fácil o muy difícil, cambia este dato en tu perfil.</p>
+</section>
+<ul class="ejercicios ejercicios--grande tarjeta">
+  {% for e in ejercicios %}
+  <li>
+    <div>
+      <strong>{{ e.nombre }}</strong>
+      <span class="ayuda">{{ e.grupo }}</span>
+      <p class="como-texto">{{ e.como }}</p>
+    </div>
+    <span class="meta">{{ texto_meta(e.unidad, e.meta) }}</span>
+  </li>
+  {% endfor %}
+</ul>
+<div class="fila fila--gap">
+  <a class="btn" href="{{ url_for('actividad.reto') }}">Ir al reto diario</a>
+  <a class="btn btn--sec" href="{{ url_for('actividad.objetivos') }}">Cambiar objetivo</a>
+</div>
+<p class="nota-pie"><a href="{{ url_for('actividad.objetivo', clave=usuario_actual.objetivo) }}">Ver la lista para los 7 grupos de edad</a></p>
+{% endblock %}

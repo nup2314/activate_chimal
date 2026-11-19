@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}Editar perfil{% endblock %}
+{% block seccion %}cuenta{% endblock %}
+{% block contenido %}
+{% set u = usuario_actual %}
+{% set f = request.form if request.method == 'POST' else {} %}
+{{ cabecera("Editar perfil", volver=url_for('perfil.ver'), volver_texto="Mi perfil") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  <div class="campo-fila">
+    {{ campo("nombre", "Nombre", valor=f.get("nombre", u.nombre), required=true, maxlength="100") }}
+    {{ campo("apellidos", "Apellidos", valor=f.get("apellidos", u.apellidos), maxlength="150") }}
+  </div>
+  {{ campo("correo", "Correo electrónico", "email", f.get("correo", u.correo), required=true, maxlength="150") }}
+  <div class="campo-fila campo-fila--3">
+    {{ campo("edad", "Edad", "number", f.get("edad", u.edad or ""), required=true, min="10", max="100", inputmode="numeric") }}
+    {{ campo("peso", "Peso (kg)", "number", f.get("peso", u.peso or ""), min="20", max="300", step="0.1", inputmode="decimal") }}
+    {{ campo("estatura", "Estatura (cm)", "number", f.get("estatura", u.estatura|int if u.estatura else ""), min="80", max="250", inputmode="numeric") }}
+  </div>
+  <fieldset class="opciones">
+    <legend>¿Haces ejercicio con frecuencia?</legend>
+    {% for clave, fr in frecuencias.items() %}
+    <label class="opcion"><input type="radio" name="frecuencia" value="{{ clave }}" {% if f.get("frecuencia", u.frecuencia) == clave %}checked{% endif %}><span>{{ fr.nombre }}</span></label>
+    {% endfor %}
+  </fieldset>
+  <details class="plegable">
+    <summary>Cambiar contraseña</summary>
+    <div class="campo-fila">
+      {{ campo("contrasena", "Nueva contraseña", "password", "", "Déjala vacía para conservar la actual.", minlength="8", autocomplete="new-password") }}
+      {{ campo("confirmar", "Repite la nueva contraseña", "password", "", minlength="8", autocomplete="new-password") }}
+    </div>
+  </details>
+  <button class="btn btn--bloque" type="submit">Guardar cambios</button>
+</form>
+
+<section class="zona-peligro" id="zona-peligro">
+  <h2>Eliminar mi cuenta</h2>
+  <p>Se borrarán tu perfil, tus actividades, pasos, retos y avatar. No se puede deshacer.</p>
+  <form method="post" action="{{ url_for('perfil.eliminar') }}" class="formulario" novalidate>
+    {{ csrf() }}
+    {{ campo("confirmar", "Escribe ELIMINAR para confirmar", id="confirmar_borrado", autocomplete="off") }}
+    {{ campo("contrasena", "Tu contraseña", "password", "", id="contrasena_borrado", autocomplete="current-password") }}
+    <button class="btn btn--peligro" type="submit">Eliminar cuenta definitivamente</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono %}
+{% block titulo %}Prevención de adicciones{% endblock %}
+{% block seccion %}info{% endblock %}
+{% block contenido %}
+{{ cabecera("Prevención de adicciones", "Información para cuidarte a ti y a las personas que te importan.") }}
+
+<section class="tarjeta tarjeta--aviso">
+  <h2>¿Necesitas hablar con alguien?</h2>
+  <p>{{ ayuda.nombre }}: <a class="telefono" href="tel:{{ ayuda.telefono|replace(' ', '') }}">{{ ayuda.telefono }}</a></p>
+  <p class="ayuda">{{ ayuda.descripcion }}</p>
+</section>
+
+<div class="acordeon">
+  {% for t in temas %}
+  <details {% if loop.first %}open{% endif %}>
+    <summary><strong>{{ t.titulo }}</strong><span>{{ t.resumen }}</span></summary>
+    <div class="acordeon-cuerpo">
+      <h3>Qué debes saber</h3>
+      <ul class="vinetas">{% for p in t.puntos %}<li>{{ p }}</li>{% endfor %}</ul>
+      <h3>Señales de alerta</h3>
+      <ul class="vinetas">{% for s in t.senales %}<li>{{ s }}</li>{% endfor %}</ul>
+    </div>
+  </details>
+  {% endfor %}
+</div>
+
+<section class="tarjeta">
+  <h2>Cómo decir que no</h2>
+  <ol class="pasos-lista">{% for f in formas %}<li>{{ f }}</li>{% endfor %}</ol>
+</section>
+<p class="ayuda">El deporte también protege: moverte reduce el estrés y mejora el sueño. Esta información es educativa y no sustituye la atención de un profesional de la salud.</p>
+{% endblock %}

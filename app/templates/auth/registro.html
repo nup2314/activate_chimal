@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera, mascota %}
+{% block titulo %}Crear cuenta{% endblock %}
+{% block seccion %}cuenta{% endblock %}
+{% block contenido %}
+{{ cabecera("Crea tu cuenta", "Solo necesitas unos datos para armar tu reto.") }}
+{{ mascota("¡Súbete a la nave! Crear tu cuenta toma un minuto.") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  <div class="campo-fila">
+    {{ campo("nombre", "Nombre", valor=datos.get("nombre", ""), required=true, maxlength="100", autocomplete="given-name") }}
+    {{ campo("apellidos", "Apellidos (opcional)", valor=datos.get("apellidos", ""), maxlength="150", autocomplete="family-name") }}
+  </div>
+  {{ campo("correo", "Correo electrónico", "email", datos.get("correo", ""), required=true, maxlength="150", autocomplete="email", inputmode="email") }}
+  {{ campo("edad", "Edad", "number", datos.get("edad", ""), "Con tu edad armamos rutinas a tu medida.", required=true, min="10", max="100", inputmode="numeric") }}
+
+  <fieldset class="opciones">
+    <legend>¿Haces ejercicio con frecuencia?</legend>
+    {% for clave, f in frecuencias.items() %}
+    <label class="opcion">
+      <input type="radio" name="frecuencia" value="{{ clave }}" {% if datos.get("frecuencia", "ocasional") == clave %}checked{% endif %} required>
+      <span>{{ f.nombre }}</span>
+    </label>
+    {% endfor %}
+  </fieldset>
+
+  <div class="campo-fila">
+    {{ campo("contrasena", "Contraseña", "password", "", "Mínimo 8 caracteres, con letras y números.", required=true, minlength="8", autocomplete="new-password") }}
+    {{ campo("confirmar", "Repite la contraseña", "password", "", required=true, minlength="8", autocomplete="new-password") }}
+  </div>
+  <button class="btn btn--bloque" type="submit">Crear cuenta</button>
+  <p class="nota-pie">¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a></p>
+</form>
+{% endblock %}

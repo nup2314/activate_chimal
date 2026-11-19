@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono %}
+{% block titulo %}Novedades deportivas{% endblock %}
+{% block seccion %}comunidad{% endblock %}
+{% block contenido %}
+{{ cabecera("Novedades deportivas", "Noticias, eventos, torneos y consejos de la comunidad.") }}
+<nav class="subnav" aria-label="Filtrar por tipo">
+  <a href="{{ url_for('comunidad.novedades') }}" {% if not tipo %}aria-current="page"{% endif %}>Todas</a>
+  {% for clave, nombre in TIPOS_NOVEDAD.items() %}
+  <a href="{{ url_for('comunidad.novedades', tipo=clave) }}" {% if tipo == clave %}aria-current="page"{% endif %}>{{ nombre }}s</a>
+  {% endfor %}
+</nav>
+<ul class="lista lista--tarjetas">
+  {% for n in novedades %}
+  <li>
+    <a class="tarjeta tarjeta--enlace novedad-item" href="{{ url_for('comunidad.novedad', novedad_id=n.id) }}">
+      <span class="insignia insignia--{{ n.tipo }}">{{ TIPOS_NOVEDAD.get(n.tipo, n.tipo) }}</span>
+      <h2>{{ n.titulo }}</h2>
+      <p>{{ n.descripcion|truncate(140) }}</p>
+      <p class="ayuda">{% if n.fecha_evento %}{{ icono('historial') }} {{ n.fecha_evento|fecha('hora') }}{% else %}Publicado el {{ n.fecha_publicacion|fecha }}{% endif %}{% if n.lugar %} · {{ n.lugar }}{% endif %}</p>
+    </a>
+  </li>
+  {% else %}
+  <li class="vacio-texto tarjeta">Aún no hay novedades{% if tipo %} de este tipo{% endif %}. Vuelve pronto: el personal las publica aquí.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}Contacto{% endblock %}
+{% block seccion %}info{% endblock %}
+{% block contenido %}
+{{ cabecera("Contacto", "Escríbenos una duda, idea o problema. Te respondemos por correo.") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  <div class="campo-fila">
+    {{ campo("nombre", "Tu nombre", valor=datos.nombre, required=true, maxlength="100") }}
+    {{ campo("correo", "Correo para responderte", "email", datos.correo, required=true, maxlength="150") }}
+  </div>
+  {{ campo("asunto", "Asunto", valor=datos.asunto, required=true, maxlength="150") }}
+  <div class="campo">
+    <label for="mensaje">Mensaje</label>
+    <textarea id="mensaje" name="mensaje" rows="6" required minlength="10" maxlength="3000">{{ datos.mensaje }}</textarea>
+  </div>
+  <button class="btn btn--bloque" type="submit">Enviar mensaje</button>
+</form>
+{% endblock %}

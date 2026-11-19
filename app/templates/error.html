@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_ui.html" import mascota %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<section class="vacio">
+  <p class="vacio-codigo">{{ codigo }}</p>
+  <h1>{{ titulo }}</h1>
+  {{ mascota(texto ~ " ¡Vamos de regreso a la base!", 72, "mascota--centro") }}
+  <a class="btn" href="{{ url_for('main.inicio') }}">Ir al inicio</a>
+</section>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}Muévete a tu ritmo{% endblock %}
+{% block seccion %}portada{% endblock %}
+{% block clase_main %}envoltura--ancha{% endblock %}
+{% block contenido %}
+<section class="portada">
+  <div class="portada-texto">
+    <h1>Muévete a tu ritmo</h1>
+    <p class="lema">Nuestra comunidad en movimiento</p>
+    <p>Cada día es una órbita completa: retos diarios, deportes como planetas por explorar, tus pasos y una clasificación con tu comunidad.</p>
+    <div class="portada-acciones">
+      <a class="btn btn--grande" href="{{ url_for('auth.registro') }}">Crear mi cuenta</a>
+      <a class="btn btn--sec btn--grande" href="{{ url_for('auth.login') }}">Ya tengo cuenta</a>
+    </div>
+  </div>
+  <figure class="portada-figura">
+    <img src="{{ url_for('static', filename='img/mascota.webp') }}" width="640" height="769" alt="Nuestra mascota, un felino astronauta que saluda desde una nave espacial" fetchpriority="high">
+  </figure>
+</section>
+
+<section class="portada-pasos">
+  <article>
+    <h2>Una misión para cada día</h2>
+    <p>Rutinas según tu edad y tu objetivo. Suma repeticiones durante el día hasta llegar al 100 %.</p>
+  </article>
+  <article>
+    <h2>Seis planetas deportivos</h2>
+    <p>Cada deporte tiene su planeta: reglas, beneficios y ejercicios de práctica.</p>
+  </article>
+  <article>
+    <h2>Mide tu trayectoria</h2>
+    <p>Tu racha, tus pasos (meta de 6,000) y tu rango, de polvo estelar a estrella.</p>
+  </article>
+</section>
+
+<p class="nota-pie">¿Eres parte del personal? <a href="{{ url_for('personal.acceso') }}">Entra al módulo de personal</a>.</p>
+{% endblock %}

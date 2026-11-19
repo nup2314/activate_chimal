@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono, csrf %}
+{% block titulo %}Deportes{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera("Deportes", "Cada deporte es un planeta. Explora uno y marca tus favoritos con la estrella.") }}
+<nav class="subnav" aria-label="Filtrar deportes">
+  <a href="{{ url_for('actividad.deportes') }}" {% if not solo_favoritos %}aria-current="page"{% endif %}>Todos</a>
+  <a href="{{ url_for('actividad.deportes', ver='favoritos') }}" {% if solo_favoritos %}aria-current="page"{% endif %}>Mis favoritos (<span data-total-favoritos>{{ favoritos|length }}</span>)</a>
+</nav>
+<div class="rejilla rejilla--deportes" {% if solo_favoritos %}data-solo-favoritos{% endif %}>
+  {% for clave, d in deportes %}
+  <div class="deporte-celda">
+    <a class="deporte-tarjeta" href="{{ url_for('actividad.deporte', clave=clave) }}" style="--color-deporte: {{ d.color }}">
+      <span class="planeta {{ 'planeta--anillo' if d.planeta == 'Júpiter' }}" aria-hidden="true">{{ d.icono }}</span>
+      <strong>{{ d.nombre }}</strong>
+      <span class="etiqueta-planeta">Planeta {{ d.planeta }}</span>
+      <span>{{ d.resumen }}</span>
+    </a>
+    <form method="post" action="{{ url_for('actividad.favorito', clave=clave) }}" class="favorito-form">
+      {{ csrf() }}
+      <input type="hidden" name="volver" value="{{ request.full_path.rstrip('?') }}">
+      <button type="submit" data-nombre="{{ d.nombre }}" class="favorito {% if clave in favoritos %}favorito--si{% endif %}" aria-pressed="{{ 'true' if clave in favoritos else 'false' }}"
+              aria-label="{{ 'Quitar ' ~ d.nombre ~ ' de favoritos' if clave in favoritos else 'Agregar ' ~ d.nombre ~ ' a favoritos' }}">{{ icono('estrella') }}</button>
+    </form>
+  </div>
+  {% else %}
+  <p class="vacio-texto tarjeta">Aún no tienes favoritos. Toca la estrella de un deporte para guardarlo aquí.</p>
+  {% endfor %}
+</div>
+{% endblock %}

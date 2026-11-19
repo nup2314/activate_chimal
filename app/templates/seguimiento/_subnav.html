@@ -1,0 +1,4 @@
+<nav class="subnav" aria-label="Seguimiento">
+  <a href="{{ url_for('seguimiento.estadisticas') }}" {% if request.endpoint == 'seguimiento.estadisticas' %}aria-current="page"{% endif %}>Mi progreso</a>
+  <a href="{{ url_for('seguimiento.historial') }}" {% if request.endpoint == 'seguimiento.historial' %}aria-current="page"{% endif %}>Historial</a>
+</nav>

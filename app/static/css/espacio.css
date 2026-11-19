@@ -1,0 +1,175 @@
+/* Activate + Chimal · tema "Sistema solar"
+   Se carga después de app.css. Para volver al diseño claro, quita su <link> en base.html. */
+
+:root {
+  --fondo: #070B1E;
+  --superficie: #111836;
+  --texto: #E8EEFF;
+  --suave: #A3B0DA;
+  --borde: #27316A;
+  --navy: #F2F5FF;          /* títulos y enlaces */
+  --navy-2: #FFFFFF;
+  --teal: #5FE0E0;
+  --verde: #3DDC97;
+  --verde-osc: #3DDC97;
+  --primario: #FFC93C;      /* el Sol */
+  --primario-2: #FFDA73;
+  --sobre-primario: #1A1233;
+  --campo: #0C1230;
+  --realce: #232C5E;
+  --error: #FF8A7A;
+  --error-fondo: #3A1822;
+  --ok-fondo: #10322B;
+  --info-fondo: #17285A;
+  --sombra: 0 0 0 1px rgba(120, 140, 255, .16), 0 10px 28px rgba(0, 0, 0, .35);
+  --f-titulo: "Space Grotesk", "Trebuchet MS", system-ui, sans-serif;
+  color-scheme: dark;
+}
+/* Cada módulo es un planeta */
+body[data-seccion="cuenta"]      { --acento: #FFA85C; --tinte: #2E2030; }   /* Venus */
+body[data-seccion="actividad"]   { --acento: #3DDC97; --tinte: #0F2E34; }   /* Tierra */
+body[data-seccion="seguimiento"] { --acento: #7C9BFF; --tinte: #17235A; }   /* Neptuno */
+body[data-seccion="comunidad"]   { --acento: #FFC93C; --tinte: #3A2E16; }   /* Sol */
+body[data-seccion="avatar"]      { --acento: #C39BFF; --tinte: #281F55; }   /* Nebulosa */
+body[data-seccion="info"]        { --acento: #5FE0E0; --tinte: #0E3040; }   /* Urano */
+body[data-seccion="personal"]    { --acento: #E8D08A; --tinte: #31294A; }   /* Saturno */
+
+/* Fondo de estrellas */
+body {
+  background-color: var(--fondo);
+  background-image:
+    radial-gradient(1.2px 1.2px at 30px 40px, #fff, transparent 60%),
+    radial-gradient(1px 1px at 120px 90px, #cfe0ff, transparent 60%),
+    radial-gradient(1.4px 1.4px at 200px 20px, #fff6d6, transparent 60%),
+    radial-gradient(1px 1px at 80px 170px, #fff, transparent 60%),
+    radial-gradient(1.2px 1.2px at 170px 210px, #bfe9ff, transparent 60%),
+    radial-gradient(70% 45% at 85% -5%, rgba(124, 92, 255, .28), transparent 70%),
+    radial-gradient(60% 40% at 0% 100%, rgba(24, 165, 184, .16), transparent 70%);
+  background-size: 240px 240px, 240px 240px, 240px 240px, 240px 240px, 240px 240px, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* ───── Estructura ───── */
+.barra-superior { background: #0A1030; border-bottom: 1px solid var(--borde); }
+.marca-logo { background: transparent; padding: 0; }
+.marca-texto b { color: var(--primario); }
+.enlace-barra { border-color: #4A58A0; }
+.barra-inferior a[aria-current="page"] { color: var(--primario); }
+.barra-inferior a[aria-current="page"]::before { background: var(--primario); }
+.barra-inferior { box-shadow: 0 -4px 22px rgba(0, 0, 0, .45); }
+.menu-lateral { box-shadow: -10px 0 40px rgba(0, 0, 0, .6); border-left: 1px solid var(--borde); }
+.menu-lateral a:hover, .menu-salir:hover { background: var(--realce); }
+.menu-lateral a[aria-current="page"] { color: var(--primario); }
+.velo { background: rgba(3, 5, 18, .7); }
+.saltar { background: var(--primario); color: var(--sobre-primario); }
+
+/* ───── Avisos ───── */
+.aviso--ok { color: #A5F3CF; }
+.aviso--error { color: #FFC2B9; }
+.aviso--info { color: #C6D4FF; }
+
+/* ───── Encabezado, botones, formularios ───── */
+.cabecera-pagina { background: var(--tinte); box-shadow: var(--sombra); }
+.cabecera-pagina p { color: #C6D0F2; }
+.btn { background: var(--primario); border-color: var(--primario); color: var(--sobre-primario); }
+.btn:hover { background: var(--primario-2); border-color: var(--primario-2); color: var(--sobre-primario); }
+.btn--sec { background: transparent; color: var(--navy); border-color: #4F5EA8; }
+.btn--sec:hover { background: rgba(255, 255, 255, .08); color: var(--navy); }
+.btn--claro { background: var(--primario); border-color: var(--primario); color: var(--sobre-primario); }
+.btn--claro:hover { background: var(--primario-2); color: var(--sobre-primario); }
+.btn--peligro { background: #E5483A; border-color: #E5483A; color: #fff; }
+.btn--peligro:hover { background: #C9382B; color: #fff; }
+.btn--texto { background: transparent; border-color: transparent; color: var(--navy); }
+.btn--texto:hover { background: var(--realce); color: var(--navy); }
+.campo input, .campo select, .campo textarea, .sumar-libre input { background: var(--campo); color: var(--texto); border-color: #3B4890; }
+.campo input::placeholder, .sumar-libre input::placeholder, .campo textarea::placeholder { color: #6F7DB3; }
+.campo input:focus, .campo select:focus, .campo textarea:focus { outline-color: rgba(95, 224, 224, .4); }
+.opcion span { background: var(--campo); border-color: #3B4890; color: var(--texto); }
+.opcion input:checked + span { background: rgba(255, 201, 60, .14); border-color: var(--primario); box-shadow: inset 0 0 0 1px var(--primario); color: var(--navy); }
+.plegable { background: var(--superficie); border-color: var(--borde); }
+
+/* ───── Superficies ───── */
+.tarjeta--aviso, .nota, .mi-lugar { background: var(--tinte); }
+.lista-item, .atajos a, .cifras div, .evento, .tabla-scroll, .acordeon details, .portada-pasos article,
+.deporte-tarjeta, .objetivo-tarjeta, .tab, .subnav a { background: var(--superficie); box-shadow: var(--sombra); }
+.tab, .subnav a { color: var(--texto); border-color: var(--borde); box-shadow: none; }
+.tab[aria-selected="true"], .subnav a[aria-current="page"] { background: var(--primario); border-color: var(--primario); color: var(--sobre-primario); }
+.tab .insignia { background: var(--sobre-primario); color: var(--primario); }
+.atajos a { color: var(--navy); }
+.atajos a:hover { background: var(--realce); }
+.tarjeta--enlace:hover { box-shadow: 0 0 0 1px rgba(255, 201, 60, .45), 0 12px 30px rgba(0, 0, 0, .45); }
+.tabla thead th { background: #0C1230; }
+.tabla--clasif tr.yo > * { background: rgba(61, 220, 151, .13); }
+.acordeon details[open] summary { background: var(--tinte); }
+.objetivo-tarjeta input:checked + .objetivo-cuerpo { background: color-mix(in srgb, var(--color-obj) 18%, var(--superficie)); }
+.zona-peligro { background: #25101E; border-color: #7A2B3A; }
+.zona-peligro h2 { color: var(--error); }
+.barra, .anillo { --anillo-fondo: var(--realce); }
+.barra { background: var(--realce); }
+.columna { background: #1A2252; }
+.racha-num .ico { fill: rgba(255, 159, 67, .28); color: #FF9F43; }
+.racha-num strong { color: var(--navy); }
+.deporte-tarjeta:hover { background: #16204A; color: var(--texto); }
+.tutorial-ico { background: var(--tinte); }
+
+.insignia { background: var(--realce); color: #D4DCFF; }
+.insignia--noticia { background: #1B2E66; color: #A9C4FF; }
+.insignia--evento, .insignia--publicada, .insignia--ok { background: #123B2E; color: #8FF0C4; }
+.insignia--torneo { background: #4A3512; color: #FFD27A; }
+.insignia--consejo { background: #0F3A46; color: #8FE8F0; }
+.insignia--borrador { background: #2A3158; color: #C4CCEE; }
+.insignia--archivada { background: #3E2B22; color: #E9C4A5; }
+.insignia--tu { background: var(--primario); color: var(--sobre-primario); }
+
+/* ───── Portada ───── */
+.portada { background: #0E1534; box-shadow: var(--sombra); padding-bottom: 230px; }
+.portada p { color: #C6D0F2; }
+.portada-colina { height: 260px; }
+.portada-pasos article { border-left-color: var(--primario); }
+.portada-pasos article:nth-child(2) { border-color: var(--teal); }
+.portada-pasos article:nth-child(3) { border-color: #7C9BFF; }
+@media (min-width: 760px) { .portada { padding-bottom: 34px; min-height: 340px; } .portada-colina { top: 0; height: 100%; } }
+
+/* ───── Inicio: el Sol y la órbita ───── */
+.hero-inicio { background: #121A44; box-shadow: var(--sombra); padding-bottom: 24px; isolation: isolate; }
+.hero-inicio::before, .hero-inicio::after { content: ""; position: absolute; border-radius: 50%; z-index: -1; }
+.hero-inicio::before { width: 420px; height: 420px; right: -190px; top: -210px; border: 1.5px solid rgba(124, 155, 255, .35); box-shadow: inset 0 0 0 40px rgba(124, 155, 255, .04); }
+.hero-inicio::after { width: 270px; height: 270px; right: -120px; top: -140px; border: 1.5px solid rgba(124, 155, 255, .45); }
+.sol { position: absolute; z-index: -1; right: -48px; top: -48px; width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #FFE9A0 0%, #FFC93C 45%, #F28C28 100%); box-shadow: 0 0 60px 18px rgba(255, 176, 32, .45); }
+.hero-estado { color: #D4DCFF; }
+.hero-meta { color: #9FB0F0; }
+.hero-anillo .anillo { --anillo-fondo: rgba(255, 255, 255, .14); --anillo-valor: var(--primario); --anillo-texto: #fff; --anillo-sub: #C6D0F2; }
+.anillo { --anillo-valor: var(--verde); --anillo-texto: var(--navy); }
+
+/* ───── Deportes como planetas ───── */
+.deporte-tarjeta { border-top: 0; position: relative; overflow: hidden; gap: 4px; }
+.deporte-tarjeta::after { content: ""; position: absolute; right: -34px; top: -34px; width: 90px; height: 90px; border-radius: 50%; background: var(--color-deporte); opacity: .13; }
+.planeta { position: relative; display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 8px; border-radius: 50%; font-size: 1.55rem;
+  background: radial-gradient(circle at 32% 30%, color-mix(in srgb, var(--color-deporte) 55%, #fff) 0%, var(--color-deporte) 48%, color-mix(in srgb, var(--color-deporte) 35%, #000) 100%);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--color-deporte) 50%, transparent); }
+.planeta--anillo::before { content: ""; position: absolute; width: 84px; height: 20px; border: 3px solid rgba(255, 232, 190, .75); border-radius: 50%; transform: rotate(-18deg); }
+.etiqueta-planeta { color: var(--color-deporte); font-size: .76rem; font-weight: 700; margin-bottom: 4px; }
+.deporte-tarjeta span:last-child { color: var(--suave); }
+.tarjeta--deporte { border-top: 0; border-left: 6px solid var(--color-deporte, var(--acento)); }
+.objetivo-tarjeta { border-left-width: 7px; }
+
+/* ───── Clasificación ───── */
+.rango { display: block; color: var(--suave); font-size: .74rem; font-weight: 600; }
+.participante > span:last-child { display: block; line-height: 1.25; }
+.tabla--clasif .pos--1 { color: #FFC93C; } .tabla--clasif .pos--2 { color: #C9D2E6; } .tabla--clasif .pos--3 { color: #E59A5B; }
+
+/* ───── Favoritos y alimentación ───── */
+.favorito:hover { background: rgba(255, 201, 60, .12); color: var(--primario); }
+.favorito--si { color: var(--primario); }
+.lema { color: var(--primario); }
+.chip { background: var(--superficie); color: var(--texto); }
+.macros div { background: var(--campo); }
+.plato-grafico { border-color: var(--superficie); }
+.portada .lema { color: var(--primario); font-size: 1.05rem; margin-bottom: 8px; }
+
+/* ───── Mascota en la portada: la imagen reemplaza al sistema solar dibujado ───── */
+.portada { display: grid; gap: 22px; padding: 30px 22px 22px; min-height: 0; }
+.portada-figura { max-width: 330px; width: 100%; justify-self: center; }
+@media (min-width: 760px) { .portada { grid-template-columns: 1.1fr .9fr; align-items: center; padding: 36px; } .portada-figura { justify-self: end; } }
+.mascota-img { border-color: var(--primario); }

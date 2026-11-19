@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, csrf, icono %}
+{% block titulo %}Elige tu objetivo{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera("Elige tu misión", "Con él armamos tu reto diario. Puedes cambiarlo cuando quieras." if not primera_vez else "Elige uno para armar tu reto diario. Puedes cambiarlo después.") }}
+<form method="post" class="objetivos">
+  {{ csrf() }}
+  {% for clave, o in OBJETIVOS.items() %}
+  <div class="objetivo-tarjeta" style="--color-obj: {{ o.color }}">
+    <label>
+      <input type="radio" name="objetivo" value="{{ clave }}" {% if usuario_actual.objetivo == clave %}checked{% endif %} required>
+      <span class="objetivo-cuerpo">
+        <span class="objetivo-emoji" aria-hidden="true">{{ o.icono }}</span>
+        <span><strong>{{ o.nombre }}</strong><span>{{ o.resumen }}</span></span>
+      </span>
+    </label>
+    <a class="objetivo-ver" href="{{ url_for('actividad.objetivo', clave=clave) }}">Ver ejercicios por edad</a>
+  </div>
+  {% endfor %}
+  <button class="btn btn--bloque" type="submit">Guardar objetivo</button>
+</form>
+{% endblock %}

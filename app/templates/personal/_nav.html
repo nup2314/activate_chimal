@@ -1,0 +1,7 @@
+{% from "_ui.html" import csrf %}
+<nav class="subnav subnav--personal" aria-label="Módulo de personal">
+  <a href="{{ url_for('personal.panel') }}" {% if request.endpoint == 'personal.panel' %}aria-current="page"{% endif %}>Panel</a>
+  <a href="{{ url_for('personal.novedades') }}" {% if request.endpoint in ('personal.novedades','personal.nueva','personal.editar') %}aria-current="page"{% endif %}>Novedades</a>
+  <a href="{{ url_for('personal.mensajes') }}" {% if request.endpoint == 'personal.mensajes' %}aria-current="page"{% endif %}>Mensajes</a>
+  <form method="post" action="{{ url_for('personal.salir') }}">{{ csrf() }}<button type="submit" class="btn btn--chico btn--texto">Salir del módulo</button></form>
+</nav>

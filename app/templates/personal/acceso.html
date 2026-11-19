@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}Acceso del personal{% endblock %}
+{% block seccion %}personal{% endblock %}
+{% block contenido %}
+{{ cabecera("Acceso del personal", "Solo para personal autorizado de Activate + Chimal.") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  {{ campo("usuario", "Usuario", required=true, autocomplete="username", autofocus=true) }}
+  {{ campo("contrasena", "Contraseña", "password", "", required=true, autocomplete="current-password") }}
+  <button class="btn btn--bloque" type="submit">Entrar</button>
+  <p class="nota-pie"><a href="{{ url_for('main.inicio') }}">Volver a la aplicación</a></p>
+</form>
+{% endblock %}

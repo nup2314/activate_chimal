@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}{{ 'Editar' if n else 'Nueva' }} novedad{% endblock %}
+{% block seccion %}personal{% endblock %}
+{% block contenido %}
+{{ cabecera("Editar novedad" if n else "Nueva novedad", volver=url_for('personal.novedades'), volver_texto="Novedades") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  {{ campo("titulo", "Título", valor=datos.get("titulo", ""), required=true, maxlength="150") }}
+  <div class="campo-fila">
+    <div class="campo"><label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" required><option value="">Elige…</option>
+        {% for k, v in tipos.items() %}<option value="{{ k }}" {% if datos.get("tipo") == k %}selected{% endif %}>{{ v }}</option>{% endfor %}
+      </select></div>
+    <div class="campo"><label for="estado">Estado</label>
+      <select id="estado" name="estado" required>
+        {% for k, v in estados.items() %}<option value="{{ k }}" {% if datos.get("estado") == k %}selected{% endif %}>{{ v }}</option>{% endfor %}
+      </select></div>
+  </div>
+  <div class="campo">
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" name="descripcion" rows="8" required minlength="10" maxlength="5000">{{ datos.get("descripcion", "") }}</textarea>
+    <p class="ayuda">Separa los párrafos con una línea en blanco.</p>
+  </div>
+  <div class="campo-fila">
+    {{ campo("fecha_evento", "Fecha y hora del evento (opcional)", "datetime-local", datos.get("fecha_evento", "")) }}
+    {{ campo("lugar", "Lugar (opcional)", valor=datos.get("lugar", ""), maxlength="150") }}
+  </div>
+  <button class="btn btn--bloque" type="submit">{{ 'Guardar cambios' if n else 'Crear novedad' }}</button>
+</form>
+{% endblock %}

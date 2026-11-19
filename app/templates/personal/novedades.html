@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono, csrf %}
+{% block titulo %}Administrar novedades{% endblock %}
+{% block seccion %}personal{% endblock %}
+{% block clase_main %}envoltura--ancha{% endblock %}
+{% block contenido %}
+{{ cabecera("Novedades deportivas", "Crea, edita, publica y archiva lo que ven los usuarios.") }}
+{% include "personal/_nav.html" %}
+<div class="fila fila--entre fila--envolver">
+  <form method="get" class="filtros filtros--en-linea">
+    <div class="campo"><label for="estado">Estado</label>
+      <select id="estado" name="estado"><option value="">Todos</option>
+        {% for k, v in estados.items() %}<option value="{{ k }}" {% if estado == k %}selected{% endif %}>{{ v }}</option>{% endfor %}
+      </select></div>
+    <div class="campo"><label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo"><option value="">Todos</option>
+        {% for k, v in TIPOS_NOVEDAD.items() %}<option value="{{ k }}" {% if tipo == k %}selected{% endif %}>{{ v }}</option>{% endfor %}
+      </select></div>
+    <button class="btn btn--sec" type="submit">Filtrar</button>
+  </form>
+  <a class="btn" href="{{ url_for('personal.nueva') }}">{{ icono('mas') }} Nueva novedad</a>
+</div>
+
+<div class="tabla-scroll">
+<table class="tabla">
+  <thead><tr><th scope="col">Título</th><th scope="col">Tipo</th><th scope="col">Estado</th><th scope="col">Actualizada</th><th scope="col"><span class="solo-lectores">Acciones</span></th></tr></thead>
+  <tbody>
+  {% for n in novedades %}
+    <tr>
+      <th scope="row">{{ n.titulo }}{% if n.autor %}<span class="ayuda"> · {{ n.autor.usuario }}</span>{% endif %}</th>
+      <td>{{ TIPOS_NOVEDAD.get(n.tipo, n.tipo) }}</td>
+      <td><span class="insignia insignia--{{ n.estado }}">{{ estados[n.estado] }}</span></td>
+      <td>{{ n.actualizado_en|fecha }}</td>
+      <td class="acciones">
+        <a class="btn btn--chico btn--sec" href="{{ url_for('personal.editar', novedad_id=n.id) }}">Editar</a>
+        <form method="post" action="{{ url_for('personal.cambiar_estado', novedad_id=n.id) }}">{{ csrf() }}
+          {% if n.estado == 'publicada' %}<input type="hidden" name="estado" value="archivada"><button class="btn btn--chico btn--sec" type="submit">Archivar</button>
+          {% else %}<input type="hidden" name="estado" value="publicada"><button class="btn btn--chico" type="submit">Publicar</button>{% endif %}
+        </form>
+        <form method="post" action="{{ url_for('personal.eliminar', novedad_id=n.id) }}" data-confirmar="¿Eliminar «{{ n.titulo }}» definitivamente? No se puede deshacer.">{{ csrf() }}
+          <button class="btn btn--chico btn--texto btn--peligro-texto" type="submit">Eliminar</button></form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="vacio-texto">No hay novedades con estos filtros.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

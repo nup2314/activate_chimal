@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, anillo, barra, csrf, icono %}
+{% block titulo %}Pasos{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera("Pasos", "Meta diaria: " ~ (meta_pasos|miles) ~ " pasos.") }}
+{% set pct = ([ (hoy_pasos * 100 / meta_pasos)|round|int, 100 ]|min) %}
+<section class="tarjeta reto-resumen">
+  {{ anillo(pct, 120, 12, "de la meta") }}
+  <div>
+    <p class="cifra-grande">{{ hoy_pasos|miles }}<small> pasos hoy</small></p>
+    {% if hoy_pasos >= meta_pasos %}<p>¡Llegaste a tu meta!</p>
+    {% else %}<p>Te faltan {{ (meta_pasos - hoy_pasos)|miles }} pasos.</p>{% endif %}
+  </div>
+</section>
+
+<form method="post" class="tarjeta formulario" novalidate>
+  {{ csrf() }}
+  <h2>Anotar pasos</h2>
+  <div class="campo">
+    <label for="cantidad">Cantidad de pasos</label>
+    <input id="cantidad" name="cantidad" type="number" min="0" max="100000" inputmode="numeric" required placeholder="Ej. 1500">
+  </div>
+  <fieldset class="opciones opciones--fila">
+    <legend class="solo-lectores">Cómo guardar</legend>
+    <label class="opcion"><input type="radio" name="modo" value="sumar" checked><span>Sumar a los de hoy</span></label>
+    <label class="opcion"><input type="radio" name="modo" value="fijar"><span>Reemplazar el total de hoy</span></label>
+  </fieldset>
+  <button class="btn btn--bloque" type="submit">Guardar pasos</button>
+</form>
+
+<section class="tarjeta contador" id="contador" hidden>
+  <h2>Contador con el sensor del celular <span class="insignia">Beta</span></h2>
+  <p class="ayuda">Cuenta pasos usando el movimiento del teléfono mientras esta página está abierta y en pantalla. Es una estimación: revisa el número antes de guardarlo.</p>
+  <p class="cifra-grande"><span id="contador-num">0</span><small> pasos contados</small></p>
+  <div class="fila fila--gap">
+    <button class="btn btn--sec" type="button" id="contador-iniciar">Iniciar</button>
+    <button class="btn btn--sec" type="button" id="contador-parar" hidden>Detener</button>
+    <form method="post" id="contador-form">
+      {{ csrf() }}
+      <input type="hidden" name="modo" value="sumar">
+      <input type="hidden" name="cantidad" id="contador-valor" value="0">
+      <button class="btn" type="submit" id="contador-guardar" disabled>Sumar a mis pasos</button>
+    </form>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <h2>Últimos 7 días</h2>
+  <ol class="columnas" aria-label="Pasos por día">
+    {% for d in semana %}
+    <li class="{% if d.es_hoy %}columnas--hoy{% endif %}">
+      <span class="columna" style="--alto: {{ d.pasos_pct }}%"><i></i></span>
+      <span class="columnas-dia">{{ d.dia }}</span>
+      <span class="columnas-valor">{{ d.pasos|miles if d.pasos else '–' }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endblock %}

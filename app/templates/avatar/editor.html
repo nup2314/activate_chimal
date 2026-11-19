@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, csrf, icono %}
+{% block titulo %}Creador de avatar{% endblock %}
+{% block seccion %}avatar{% endblock %}
+{% block clase_main %}envoltura--creador{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/avatar-creador.css') }}">{% endblock %}
+{% block contenido %}
+{{ cabecera("Creador de avatar", "Cambia cada detalle y mira el resultado al instante. Se guarda en tu cuenta.") }}
+
+<div class="creador" id="creador" data-config='{{ config|tojson }}'>
+  <form method="post" id="creador-form" action="{{ url_for('avatar.editor') }}">
+    {{ csrf() }}<input type="hidden" name="config" id="creador-config">
+  </form>
+
+  <section class="cr-escena" aria-label="Vista previa de tu avatar">
+    <div class="cr-herramientas" role="toolbar" aria-label="Herramientas">
+      <button type="button" class="cr-herr" data-accion="vista" aria-pressed="false" title="Acercar o alejar">{{ icono('zoom') }}<span class="solo-lectores">Acercar o alejar</span></button>
+      <button type="button" class="cr-herr" data-accion="aleatorio" title="Aleatorio">{{ icono('dado') }}<span class="solo-lectores">Aleatorio</span></button>
+      <button type="button" class="cr-herr" data-accion="deshacer" title="Deshacer" disabled>{{ icono('deshacer') }}<span class="solo-lectores">Deshacer</span></button>
+      <button type="button" class="cr-herr" data-accion="reiniciar" title="Volver a lo guardado">{{ icono('reiniciar') }}<span class="solo-lectores">Restablecer</span></button>
+    </div>
+    <div class="cr-escenario" id="cr-escenario"><noscript><p class="cr-noscript">El creador necesita JavaScript.</p></noscript></div>
+    <div class="cr-pie">
+      <button type="button" class="btn btn--chico" data-accion="guardar">{{ icono('check') }} Guardar avatar</button>
+      <span class="cr-estado" id="cr-estado" role="status" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <nav class="cr-categorias" role="tablist" aria-label="Categorías" id="cr-categorias"></nav>
+  <section class="cr-panel" id="cr-panel" aria-live="polite"></section>
+</div>
+
+<script type="application/json" id="avatar-esquema">{{ esquema|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/avatar-editor.js') }}" defer></script>{% endblock %}

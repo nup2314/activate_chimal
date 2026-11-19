@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono, csrf %}
+{% block titulo %}{{ d.nombre }}{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+<div style="--color-deporte: {{ d.color }}">
+{{ cabecera(d.icono ~ " " ~ d.nombre, d.resumen ~ " · Planeta " ~ d.planeta, volver=url_for('actividad.deportes'), volver_texto="Deportes") }}
+
+<section class="tarjeta tarjeta--deporte">
+  <h2>Reglas básicas</h2>
+  <ul class="vinetas">{% for r in d.reglas %}<li>{{ r }}</li>{% endfor %}</ul>
+</section>
+
+<div class="rejilla rejilla--2">
+  <section class="tarjeta">
+    <h2>Beneficios</h2>
+    <ul class="vinetas">{% for b in d.beneficios %}<li>{{ b }}</li>{% endfor %}</ul>
+  </section>
+  <section class="tarjeta">
+    <h2>Lo que necesitas</h2>
+    <ul class="vinetas">{% for e in d.equipo %}<li>{{ e }}</li>{% endfor %}</ul>
+  </section>
+</div>
+
+<section class="tarjeta">
+  <h2>Ejercicios de práctica</h2>
+  <ol class="pasos-lista">{% for p in d.practica %}<li>{{ p }}</li>{% endfor %}</ol>
+  <p class="ayuda">Calienta de 5 a 10 minutos antes y estira al terminar.</p>
+</section>
+
+<form method="post" action="{{ url_for('actividad.favorito', clave=clave) }}">
+  {{ csrf() }}<input type="hidden" name="volver" value="{{ url_for('actividad.deporte', clave=clave) }}">
+  <button class="btn btn--sec btn--bloque" type="submit">{{ icono('estrella') }} {{ 'Quitar de mis favoritos' if es_favorito else 'Agregar a mis favoritos' }}</button>
+</form>
+
+<a class="btn btn--bloque" href="{{ url_for('actividad.registrar', tipo=d.nombre) }}">Registrar una sesión de {{ d.nombre|lower }}</a>
+</div>
+{% endblock %}

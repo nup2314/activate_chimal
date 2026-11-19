@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icono, anillo, barra, mascota %}
+{% block titulo %}Inicio{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+<section class="hero-inicio">
+  <div class="hero-texto">
+    <h1>Hola, {{ usuario_actual.nombre }}</h1>
+    <p class="hero-estado">
+      {% if reto.completo %}Completaste tu reto de hoy. Buen trabajo.
+      {% elif reto.porcentaje > 0 %}Vas avanzando: te falta {{ 100 - reto.porcentaje }} % para cerrar el día.
+      {% else %}Tu reto de hoy sigue en 0 %. Con unos minutos arrancas.{% endif %}
+    </p>
+    <p class="hero-meta">Misión: {{ reto.objetivo.nombre }} · {{ reto.grupo_edad.nombre }}</p>
+    <a class="btn btn--claro" href="{{ url_for('actividad.reto') }}">{% if reto.porcentaje > 0 and not reto.completo %}Seguir con el reto{% elif reto.completo %}Ver mi reto{% else %}Empezar el reto{% endif %}</a>
+  </div>
+  <div class="hero-anillo">{{ anillo(reto.porcentaje, 150, 14, "órbita de hoy") }}</div>
+  <span class="sol" aria-hidden="true"></span>
+</section>
+
+{% if reto.completo %}{% set msg = "¡Misión cumplida! Completaste tu órbita de hoy. Mañana te espera una nueva." %}
+{% elif reto.porcentaje > 0 %}{% set msg = "¡Vas muy bien! Cada repetición cuenta, sigue sumando." %}
+{% else %}{% set msg = "¡Hola, " ~ usuario_actual.nombre ~ "! Empieza tu reto de hoy, yo te acompaño." %}{% endif %}
+{{ mascota(msg) }}
+
+<section class="rejilla rejilla--2">
+  <a class="tarjeta tarjeta--enlace" href="{{ url_for('actividad.pasos') }}">
+    <div class="tarjeta-cab">{{ icono('pasos') }}<h2>Pasos de hoy</h2></div>
+    <p class="cifra-grande">{{ pasos|miles }}<small> / {{ meta_pasos|miles }}</small></p>
+    {{ barra([ (pasos * 100 / meta_pasos)|round|int, 100 ]|min) }}
+  </a>
+  <a class="tarjeta tarjeta--enlace" href="{{ url_for('seguimiento.estadisticas') }}">
+    <div class="tarjeta-cab">{{ icono('racha') }}<h2>Días en órbita</h2></div>
+    <p class="cifra-grande">{{ racha }}<small> {{ 'día' if racha == 1 else 'días' }}</small></p>
+    <p class="ayuda">{% if racha %}Sigue mañana para sumar uno más.{% else %}Registra algo hoy y empieza tu racha.{% endif %}</p>
+  </a>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Panel de control</h2>
+  <div class="atajos">
+    <a href="{{ url_for('actividad.registrar') }}">{{ icono('mas') }}<span>Registrar actividad</span></a>
+    <a href="{{ url_for('seguimiento.estadisticas') }}">{{ icono('estadisticas') }}<span>Mi progreso</span></a>
+    <a href="{{ url_for('comunidad.novedades') }}">{{ icono('novedades') }}<span>Novedades</span></a>
+    <a href="{{ url_for('comunidad.clasificacion') }}">{{ icono('trofeo') }}<span>Clasificación</span></a>
+    <a href="{{ url_for('info.alimentacion') }}">{{ icono('alimentacion') }}<span>Alimentación</span></a>
+    <a href="{{ url_for('avatar.editor') }}">{{ icono('avatar') }}<span>Mi avatar</span></a>
+  </div>
+</section>
+
+{% if favoritos %}
+<section>
+  <div class="fila fila--entre"><h2 class="titulo-seccion">Tus deportes favoritos</h2><a href="{{ url_for('actividad.deportes', ver='favoritos') }}">Ver</a></div>
+  <ul class="chips">
+    {% for k in favoritos %}<li><a class="chip" style="--color-deporte: {{ deportes[k].color }}" href="{{ url_for('actividad.deporte', clave=k) }}"><span aria-hidden="true">{{ deportes[k].icono }}</span> {{ deportes[k].nombre }}</a></li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if novedades %}
+<section>
+  <div class="fila fila--entre"><h2 class="titulo-seccion">Novedades deportivas</h2><a href="{{ url_for('comunidad.novedades') }}">Ver todas</a></div>
+  <ul class="lista">
+    {% for n in novedades %}
+    <li><a class="lista-item" href="{{ url_for('comunidad.novedad', novedad_id=n.id) }}">
+      <span class="insignia insignia--{{ n.tipo }}">{{ TIPOS_NOVEDAD.get(n.tipo, n.tipo) }}</span>
+      <strong>{{ n.titulo }}</strong>
+      <span class="ayuda">{{ n.fecha_publicacion|fecha }}</span>
+    </a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

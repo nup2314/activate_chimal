@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono, barra %}
+{% block titulo %}Mi progreso{% endblock %}
+{% block seccion %}seguimiento{% endblock %}
+{% block contenido %}
+{{ cabecera("Mi progreso", "Tus avances, tus rachas y tus resultados.") }}
+{% include "seguimiento/_subnav.html" %}
+
+<section class="tarjeta racha">
+  <div class="racha-num">{{ icono('racha') }}<strong>{{ r.racha }}</strong></div>
+  <div>
+    <h2>{{ 'día' if r.racha == 1 else 'días' }} en órbita (racha)</h2>
+    <p class="ayuda">Mejor racha: {{ r.mejor_racha }} {{ 'día' if r.mejor_racha == 1 else 'días' }}. Un día cuenta si registras una actividad, llegas a {{ meta_pasos|miles }} pasos o completas el reto diario.</p>
+  </div>
+</section>
+
+<section class="cifras">
+  <div><strong>{{ r.dias_activos }}</strong><span>días activos</span></div>
+  <div><strong>{{ r.retos_completados }}</strong><span>retos completados</span></div>
+  <div><strong>{{ r.minutos|miles }}</strong><span>minutos de actividad</span></div>
+  <div><strong>{{ r.calorias|miles }}</strong><span>calorías estimadas</span></div>
+  <div><strong>{{ r.pasos_total|miles }}</strong><span>pasos en total</span></div>
+  <div><strong>{{ r.distancia }}</strong><span>km recorridos</span></div>
+</section>
+
+<section class="tarjeta">
+  <h2>Esta semana</h2>
+  <ol class="columnas columnas--doble" aria-label="Minutos de actividad por día">
+    {% set maximo = [ (r.semana|map(attribute='minutos')|max), 30 ]|max %}
+    {% for d in r.semana %}
+    <li class="{% if d.es_hoy %}columnas--hoy{% endif %}">
+      <span class="columna" style="--alto: {{ (d.minutos * 100 / maximo)|round|int }}%"><i></i></span>
+      <span class="columnas-dia">{{ d.dia }}</span>
+      <span class="columnas-valor">{{ d.minutos if d.minutos else '–' }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="ayuda">Minutos de actividad registrados por día.</p>
+</section>
+
+<section class="tarjeta">
+  <h2>Reto diario y pasos de la semana</h2>
+  <table class="tabla">
+    <thead><tr><th scope="col">Día</th><th scope="col">Reto</th><th scope="col">Pasos</th></tr></thead>
+    <tbody>
+    {% for d in r.semana|reverse %}
+      <tr><th scope="row">{{ d.dia }} {{ d.fecha.day }}{% if d.es_hoy %} <span class="insignia">Hoy</span>{% endif %}</th>
+          <td>{{ d.reto }} %</td><td>{{ d.pasos|miles if d.pasos else '–' }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="tarjeta">
+  <h2>Por actividad</h2>
+  {% if r.por_deporte %}
+  <ul class="lista-barras">
+    {% set max_min = r.por_deporte[0].minutos or 1 %}
+    {% for a in r.por_deporte %}
+    <li><div class="fila fila--entre"><strong>{{ a.nombre }}</strong><span class="ayuda">{{ a.veces }} {{ 'vez' if a.veces == 1 else 'veces' }} · {{ a.minutos }} min</span></div>
+      {{ barra((a.minutos * 100 / max_min)|round|int) }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="vacio-texto">Todavía no registras actividades. <a href="{{ url_for('actividad.registrar') }}">Registra la primera</a> y aquí verás cuánto tiempo dedicas a cada una.</p>
+  {% endif %}
+</section>
+{% endblock %}

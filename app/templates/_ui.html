@@ -1,0 +1,51 @@
+{# Macros reutilizables #}
+{% macro icono(nombre, clase="") -%}
+<svg class="ico {{ clase }}" aria-hidden="true" focusable="false"><use href="#i-{{ nombre }}"/></svg>
+{%- endmacro %}
+
+{% macro anillo(pct, tam=140, grosor=12, etiqueta="") -%}
+{% set r = (tam - grosor) / 2 %}
+{% set c = 2 * 3.14159265 * r %}
+<div class="anillo" style="--tam:{{ tam }}px" role="img" aria-label="{{ pct }} % {{ etiqueta }}">
+  <svg width="{{ tam }}" height="{{ tam }}" viewBox="0 0 {{ tam }} {{ tam }}" aria-hidden="true">
+    <circle class="anillo-fondo" cx="{{ tam/2 }}" cy="{{ tam/2 }}" r="{{ r }}" stroke-width="{{ grosor }}"/>
+    <circle class="anillo-valor" cx="{{ tam/2 }}" cy="{{ tam/2 }}" r="{{ r }}" stroke-width="{{ grosor }}"
+            style="--circ: {{ c }}" stroke-dasharray="{{ c }}" stroke-dashoffset="{{ c * (1 - [pct, 100]|min / 100) }}"
+            transform="rotate(-90 {{ tam/2 }} {{ tam/2 }})"/>
+  </svg>
+  <div class="anillo-texto"><strong>{{ pct }}<small>%</small></strong>{% if etiqueta %}<span>{{ etiqueta }}</span>{% endif %}</div>
+</div>
+{%- endmacro %}
+
+{% macro barra(pct, clase="") -%}
+<div class="barra {{ clase }}" role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100"><span style="width:{{ pct }}%"></span></div>
+{%- endmacro %}
+
+{% macro campo(nombre, etiqueta, tipo="text", valor="", ayuda="") -%}
+{% set ident = kwargs.get('id', nombre) %}
+<div class="campo">
+  <label for="{{ ident }}">{{ etiqueta }}</label>
+  <input id="{{ ident }}" name="{{ nombre }}" type="{{ tipo }}" value="{{ valor if valor is not none else '' }}"
+         {%- for k, v in kwargs.items() if k != 'id' %} {{ k|replace('_','-') }}{% if v is not sameas true %}="{{ v }}"{% endif %}{% endfor %}>
+  {% if ayuda %}<p class="ayuda">{{ ayuda }}</p>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro mascota(texto, tam=64, clase="") -%}
+<div class="mascota {{ clase }}">
+  <img class="mascota-img" src="{{ url_for('static', filename='img/mascota-cara.png') }}" width="{{ tam }}" height="{{ tam }}" alt="">
+  <div class="mascota-burbuja"><strong>{{ mascota_nombre }}</strong><p>{{ texto }}</p></div>
+</div>
+{%- endmacro %}
+
+{% macro csrf() -%}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{%- endmacro %}
+
+{% macro cabecera(titulo, subtitulo="", volver=None, volver_texto="Volver") -%}
+<div class="cabecera-pagina">
+  {% if volver %}<a class="volver" href="{{ volver }}">{{ icono('atras') }}<span>{{ volver_texto }}</span></a>{% endif %}
+  <h1>{{ titulo }}</h1>
+  {% if subtitulo %}<p>{{ subtitulo }}</p>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro tinte_unidad(unidad) -%}{{ {'rep':'rep','seg':'seg','min':'min'}[unidad] }}{%- endmacro %}

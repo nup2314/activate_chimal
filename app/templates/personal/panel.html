@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono %}
+{% block titulo %}Panel del personal{% endblock %}
+{% block seccion %}personal{% endblock %}
+{% block clase_main %}envoltura--ancha{% endblock %}
+{% block contenido %}
+{{ cabecera("Panel del personal", "Sesión de " ~ personal_actual.usuario) }}
+{% include "personal/_nav.html" %}
+<section class="cifras">
+  <div><strong>{{ conteo.publicada }}</strong><span>novedades publicadas</span></div>
+  <div><strong>{{ conteo.borrador }}</strong><span>borradores</span></div>
+  <div><strong>{{ conteo.archivada }}</strong><span>archivadas</span></div>
+  <div><strong>{{ sin_leer }}</strong><span>mensajes sin leer</span></div>
+  <div><strong>{{ usuarios }}</strong><span>usuarios registrados</span></div>
+</section>
+<div class="fila fila--gap">
+  <a class="btn" href="{{ url_for('personal.nueva') }}">{{ icono('mas') }} Nueva novedad</a>
+  <a class="btn btn--sec" href="{{ url_for('personal.mensajes') }}">Ver mensajes</a>
+</div>
+<section>
+  <h2 class="titulo-seccion">Actividad reciente</h2>
+  <ul class="lista">
+    {% for n in recientes %}
+    <li><a class="lista-item" href="{{ url_for('personal.editar', novedad_id=n.id) }}">
+      <span class="insignia insignia--{{ n.estado }}">{{ n.estado|capitalize }}</span><strong>{{ n.titulo }}</strong>
+      <span class="ayuda">Actualizada el {{ n.actualizado_en|fecha('hora') }}</span></a></li>
+    {% else %}
+    <li class="vacio-texto">Aún no hay novedades. <a href="{{ url_for('personal.nueva') }}">Crea la primera</a>.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

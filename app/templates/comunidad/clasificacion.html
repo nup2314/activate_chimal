@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono %}
+{% block titulo %}Clasificación{% endblock %}
+{% block seccion %}comunidad{% endblock %}
+{% block contenido %}
+{{ cabecera("Clasificación", "Los participantes con más movimiento.") }}
+<nav class="subnav" aria-label="Periodo">
+  <a href="{{ url_for('comunidad.clasificacion') }}" {% if periodo == 'semana' %}aria-current="page"{% endif %}>Últimos 7 días</a>
+  <a href="{{ url_for('comunidad.clasificacion', periodo='total') }}" {% if periodo == 'total' %}aria-current="page"{% endif %}>Total</a>
+</nav>
+
+{% if mia %}
+<section class="tarjeta mi-lugar">
+  <div>{{ avatar_ui(usuario_actual.avatar, 56) }}</div>
+  <div>
+    <h2>Vas en el lugar {{ mia.posicion }} de {{ total }}</h2>
+    <p class="ayuda">{{ rango(mia.puntos).icono }} {{ rango(mia.puntos).nombre }} · {{ mia.puntos }} puntos · {{ mia.minutos }} min · {{ mia.pasos|miles }} pasos · {{ mia.retos }} {{ 'reto' if mia.retos == 1 else 'retos' }}</p>
+  </div>
+</section>
+{% endif %}
+
+<div class="tabla-scroll">
+<table class="tabla tabla--clasif">
+  <thead><tr><th scope="col">#</th><th scope="col">Participante</th><th scope="col" class="num">Puntos</th><th scope="col" class="num ocultar-chico">Min</th><th scope="col" class="num ocultar-chico">Pasos</th><th scope="col" class="num ocultar-chico">Retos</th></tr></thead>
+  <tbody>
+  {% for f in filas %}
+    <tr {% if f.usuario.id == usuario_actual.id %}class="yo" aria-current="true"{% endif %}>
+      <td class="pos pos--{{ f.posicion if f.posicion <= 3 else 'n' }}">{{ f.posicion }}</td>
+      <th scope="row"><span class="participante">{{ avatar_ui(f.usuario.avatar, 32) }}<span>{{ f.usuario.nombre_publico }}{% if f.usuario.id == usuario_actual.id %} <span class="insignia insignia--tu">Tú</span>{% endif %}<small class="rango">{{ rango(f.puntos).icono }} {{ rango(f.puntos).nombre }}</small></span></span></th>
+      <td class="num"><strong>{{ f.puntos|miles }}</strong></td>
+      <td class="num ocultar-chico">{{ f.minutos }}</td>
+      <td class="num ocultar-chico">{{ f.pasos|miles }}</td>
+      <td class="num ocultar-chico">{{ f.retos }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="vacio-texto">Nadie ha sumado puntos todavía. Completa un reto o anota tus pasos para abrir la tabla.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="ayuda">Rangos: polvo estelar, asteroide (50), luna (150), planeta (400) y estrella (800 puntos). Puntos: 1 por minuto de actividad, 1 por cada 100 pasos y 30 por cada reto diario completado.</p>
+{% endblock %}

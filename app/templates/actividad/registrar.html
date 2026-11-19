@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_ui.html" import campo, csrf, cabecera %}
+{% block titulo %}Registrar actividad{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera("Registrar actividad", "Guarda lo que hiciste para ver tu progreso.", volver=url_for('seguimiento.historial'), volver_texto="Historial") }}
+<form method="post" class="formulario" novalidate>
+  {{ csrf() }}
+  <div class="campo">
+    <label for="tipo">Tipo de actividad</label>
+    <select id="tipo" name="tipo" required>
+      <option value="">Elige una…</option>
+      {% for t in tipos %}<option value="{{ t }}" {% if datos.tipo == t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="campo-fila">
+    {{ campo("tiempo", "Duración (minutos)", "number", datos.get("tiempo", ""), required=true, min="1", max="1440", inputmode="numeric") }}
+    {{ campo("distancia", "Distancia (km, opcional)", "number", datos.get("distancia", ""), min="0", step="0.01", inputmode="decimal") }}
+  </div>
+  {{ campo("fecha", "Fecha", "date", datos.get("fecha", ""), required=true, min=minimo, max=hoy.isoformat()) }}
+  <fieldset class="opciones opciones--fila">
+    <legend>Esfuerzo</legend>
+    {% for e in esfuerzos %}
+    <label class="opcion"><input type="radio" name="esfuerzo" value="{{ e }}" {% if datos.get("esfuerzo", "medio") == e %}checked{% endif %}><span>{{ e|capitalize }}</span></label>
+    {% endfor %}
+  </fieldset>
+  <div class="campo">
+    <label for="notas">Notas (opcional)</label>
+    <textarea id="notas" name="notas" rows="2" maxlength="200">{{ datos.get("notas", "") }}</textarea>
+  </div>
+  <p class="ayuda">Las calorías se estiman con la actividad, el tiempo, el esfuerzo y tu peso (si no lo registraste, se usan 70 kg).</p>
+  <button class="btn btn--bloque" type="submit">Guardar actividad</button>
+</form>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono %}
+{% block titulo %}{{ n.titulo }}{% endblock %}
+{% block seccion %}comunidad{% endblock %}
+{% block contenido %}
+{{ cabecera(n.titulo, volver=url_for('comunidad.novedades'), volver_texto="Novedades") }}
+<article class="tarjeta articulo">
+  <p><span class="insignia insignia--{{ n.tipo }}">{{ TIPOS_NOVEDAD.get(n.tipo, n.tipo) }}</span> <span class="ayuda">Publicado el {{ n.fecha_publicacion|fecha }}</span></p>
+  {% if n.fecha_evento or n.lugar %}
+  <ul class="datos-evento">
+    {% if n.fecha_evento %}<li>{{ icono('historial') }} {{ n.fecha_evento|fecha('hora') }}</li>{% endif %}
+    {% if n.lugar %}<li>{{ icono('lugar') }} {{ n.lugar }}</li>{% endif %}
+  </ul>
+  {% endif %}
+  <div class="texto-largo">{% for p in n.descripcion.split('\n') if p.strip() %}<p>{{ p }}</p>{% endfor %}</div>
+</article>
+{% endblock %}

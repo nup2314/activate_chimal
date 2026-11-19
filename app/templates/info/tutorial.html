@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, icono, mascota %}
+{% block titulo %}Tutorial{% endblock %}
+{% block seccion %}info{% endblock %}
+{% block contenido %}
+{{ cabecera("Cómo usar la aplicación", "Tu manual de vuelo en nueve pasos.") }}
+{{ mascota("Te explico cómo moverte por la nave. ¡Es muy fácil!") }}
+<ol class="tutorial">
+  {% for p in pasos %}
+  <li class="tarjeta">
+    <span class="tutorial-ico">{{ icono(p.icono) }}</span>
+    <div><h2>{{ p.titulo }}</h2><p>{{ p.texto }}</p></div>
+  </li>
+  {% endfor %}
+</ol>
+<a class="btn btn--bloque" href="{{ url_for('actividad.reto') }}">Ir a mi reto diario</a>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera, anillo, barra, csrf, icono, mascota %}
+{% block titulo %}Reto diario{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera("Reto diario", "Misión: " ~ reto.objetivo.nombre ~ " · " ~ reto.grupo_edad.nombre) }}
+
+{{ mascota("¡Lo lograste! Si quieres, sigue sumando." if reto.completo else "Suma tus repeticiones por tandas durante el día. ¡Tú puedes!") }}
+
+<section class="tarjeta reto-resumen">
+  {{ anillo(reto.porcentaje, 120, 12, "completado") }}
+  <div>
+    {% if reto.completo %}
+    <h2>¡Reto completado!</h2>
+    <p>Hiciste todo lo de hoy. Si quieres seguir, puedes sumar más repeticiones.</p>
+    {% else %}
+    <h2>Suma durante el día</h2>
+    <p>Anota tus repeticiones por tandas. El reto se llena al 100 % cuando completas todos los ejercicios.</p>
+    {% endif %}
+    <p class="ayuda">{{ reto.grupo_edad.nota }}</p>
+  </div>
+</section>
+
+<ul class="reto-lista">
+  {% for e in reto.ejercicios %}
+  <li class="tarjeta ejercicio {% if e.completo %}ejercicio--ok{% endif %}" id="e-{{ e.clave }}">
+    <div class="ejercicio-cab">
+      <div>
+        <h3>{{ e.nombre }} {% if e.completo %}<span class="insignia insignia--ok">{{ icono('check') }} Listo</span>{% endif %}</h3>
+        <p class="ayuda">{{ e.grupo }}</p>
+      </div>
+      <p class="ejercicio-cifra"><strong>{{ e.hecho }}</strong> / {{ e.meta }} <span>{{ unidades[e.unidad].corto }}</span></p>
+    </div>
+    {{ barra(e.pct) }}
+    <details class="como"><summary>Cómo se hace</summary><p>{{ e.como }}</p></details>
+    <div class="sumar">
+      <form method="post" action="{{ url_for('actividad.reto_progreso') }}" class="sumar-rapido">
+        {{ csrf() }}
+        <input type="hidden" name="ejercicio" value="{{ e.clave }}">
+        {% for inc in e.incrementos %}
+        <button class="btn btn--chico" name="rapido" value="{{ inc }}" type="submit" aria-label="Sumar {{ inc }} a {{ e.nombre }}">+{{ inc }}</button>
+        {% endfor %}
+      </form>
+      <form method="post" action="{{ url_for('actividad.reto_progreso') }}" class="sumar-libre">
+        {{ csrf() }}
+        <input type="hidden" name="ejercicio" value="{{ e.clave }}">
+        <input type="number" name="cantidad" min="1" max="999" inputmode="numeric" placeholder="Otra cantidad" aria-label="Cantidad personalizada de {{ e.nombre }}">
+        <button class="btn btn--chico btn--sec" name="accion" value="sumar" type="submit">Sumar</button>
+        {% if e.hecho %}<button class="btn btn--chico btn--texto" name="accion" value="reiniciar" type="submit">Reiniciar</button>{% endif %}
+      </form>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

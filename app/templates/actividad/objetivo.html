@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_ui.html" import cabecera %}
+{% block titulo %}{{ obj.nombre }}{% endblock %}
+{% block seccion %}actividad{% endblock %}
+{% block contenido %}
+{{ cabecera(obj.icono ~ " " ~ obj.nombre, "Ejercicios del día para cada grupo de edad. Las cantidades se ajustan a tu nivel de ejercicio.", volver=url_for('actividad.objetivos'), volver_texto="Objetivos") }}
+<div class="tabs" role="tablist" aria-label="Grupos de edad">
+  {% for g in grupos %}
+  <button role="tab" type="button" class="tab" id="t-{{ g.grupo.clave }}" aria-controls="p-{{ g.grupo.clave }}" aria-selected="{{ 'true' if loop.index0 == mi_grupo else 'false' }}">
+    {{ g.grupo.nombre }}{% if loop.index0 == mi_grupo %} <span class="insignia insignia--tu">Tu grupo</span>{% endif %}
+  </button>
+  {% endfor %}
+</div>
+{% for g in grupos %}
+<section class="tarjeta panel-tab" id="p-{{ g.grupo.clave }}" role="tabpanel" aria-labelledby="t-{{ g.grupo.clave }}" {% if loop.index0 != mi_grupo %}hidden{% endif %}>
+  <p class="nota">{{ g.grupo.nota }}</p>
+  <ul class="ejercicios">
+    {% for e in g.ejercicios %}
+    <li>
+      <div><strong>{{ e.nombre }}</strong><span class="ayuda">{{ e.grupo }}</span></div>
+      <span class="meta">{{ texto_meta(e.unidad, e.meta) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% if usuario_actual.objetivo != clave %}
+<form method="post" action="{{ url_for('actividad.objetivos') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="objetivo" value="{{ clave }}">
+  <button class="btn btn--bloque" type="submit">Elegir «{{ obj.nombre }}» como mi objetivo</button>
+</form>
+{% endif %}
+{% endblock %}
